@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CustomUserManagementIdentity.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace CustomUserManagementIdentity.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -17,7 +18,7 @@ namespace CustomUserManagementIdentity.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-                   builder.Entity<IdentityUser>().ToTable("Users", "security");
+                   builder.Entity<ApplicationUser>().ToTable("Users", "security");
             builder.Entity<IdentityRole>().ToTable("Roles", "security");
             builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles", "security");
             builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims", "security");
