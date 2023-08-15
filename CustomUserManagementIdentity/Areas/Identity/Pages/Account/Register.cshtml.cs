@@ -49,13 +49,13 @@ namespace CustomUserManagementIdentity.Areas.Identity.Pages.Account
         {
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
+              
             [Display(Name = "first name")]
             public string FirstName { get; set; }
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
+           
             [Display(Name = "Last name")]
             public string lastName { get; set; }
             [Required]
