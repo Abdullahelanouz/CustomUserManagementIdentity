@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using CustomUserManagementIdentity.Models;
+using System.Net.Mail;
 
 namespace CustomUserManagementIdentity.Areas.Identity.Pages.Account
 {
@@ -80,7 +81,7 @@ namespace CustomUserManagementIdentity.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            var username = new EmailAddressAttribute().IsValid(Input.Email) ? _userManager.FindByEmailAsync(Input.Email).Result.UserName : Input.Email;
+            var username = new EmailAddressAttribute().IsValid(Input.Email) ? new MailAddress(Input.Email).User  : Input.Email;
 
         
             if (ModelState.IsValid)
