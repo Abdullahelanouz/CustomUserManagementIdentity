@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace CustomUserManagementIdentity.Controllers
@@ -32,6 +33,60 @@ namespace CustomUserManagementIdentity.Controllers
 
             return View(users);
         }
+
+        public async Task<IActionResult> Add()
+        {
+          
+            var roles = await _roleManager.Roles.Select(r=> new RoleViewModel { RoleId =r.Id,RoleName=r.Name}).ToListAsync();
+
+            var viewModel = new AddUserViewModel
+            {
+                Roles = roles
+            };
+
+            return View(viewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(AddUserViewModel model)
+        {
+            if(!ModelState.IsValid)
+                return View(model);
+            if(!model.Roles.Any(r => r.IsSelected))
+            {
+                ModelState.AddModelError("Roles", "Please Select at Least one role");
+            }
+            if(await _userManager.FindByEmailAsync(model.Email) != null)
+            {
+                ModelState.AddModelError("Email", "Email is already exists");
+                return View(model);
+            }
+            if (await _userManager.FindByNameAsync(model.UserName) != null)
+            {
+                ModelState.AddModelError("UserName", "UserName is already exists");
+                return View(model);
+            }
+            var user = new ApplicationUser
+            {
+                UserName =model.UserName,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.lastName
+            };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if(!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("Roles", error.Description);
+                }
+                return View(model);
+            }
+            await _userManager.AddToRolesAsync(user, model.Roles.Where(r=>r.IsSelected).Select(r=>r.RoleName));
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public async Task<IActionResult> ManageRoles(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
