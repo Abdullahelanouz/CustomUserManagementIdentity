@@ -1,0 +1,34 @@
+﻿using CustomUserManagementIdentity.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+
+namespace CustomUserManagementIdentity.Controllers.API
+{
+    public class UsersController : ControllerBase
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        
+
+        public UsersController(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
+        [HttpDelete]
+        public async Task< IActionResult> DeleteUser(string userId)
+        {
+           var user = await _userManager.FindByNameAsync(userId);
+            if (user == null)
+               return NotFound();
+           
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+           
+                throw new Exception();
+
+            return Ok();
+
+        }
+    }
+}
